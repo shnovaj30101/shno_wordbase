@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+        <link rel="stylesheet" href="/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css" />
+        <link href="/open-iconic/font/css/open-iconic-bootstrap.css" rel="stylesheet">
+        <link href="/stylesheets/style.css" rel="stylesheet">
+        <title>Hello, world!</title>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <p class="text-center" style="font-size:25px; margin-bottom:0px;">
+                    Search Interface
+                    </p>
+                </div>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="input-group mt-3 col-4">
+                    <div class="input-group-prepend">
+                        <button class="btn btn-outline-secondary" type="button" id="button-addon1">Text Search</button>
+                    </div>
+                    <input type="text" class="form-control" id="text-search-input" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class='col-3'>
+                    <div class="input-group mt-3 ">
+                        <div class='input-group date' id='datetimepicker_from'>
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    From
+                                </span>
+                                <span class="input-group-text">
+                                    <span class="oi oi-calendar" title="calendar" aria-hidden="true"></span>
+                                </span>
+                            </div>
+                            <input type="text" class="form-control" id="datetimepicker_from_input">
+                            <div class="input-group-append">
+                                <button type="button" id="datetimepicker_from_remove" class="btn btn-outline-danger">X</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class='col-3'>
+                    <div class="input-group mt-3">
+                        <div class='input-group date' id='datetimepicker_to'>
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    To
+                                </span>
+                                <span class="input-group-text">
+                                    <span class="oi oi-calendar" title="calendar" aria-hidden="true"></span>
+                                </span>
+                            </div>
+                            <input type="text" class="form-control" id="datetimepicker_to_input">
+                            <div class="input-group-append">
+                                <button type="button" id="datetimepicker_to_remove" class="btn btn-outline-danger">X</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class='col-6 mt-3 text-center'>
+                    <button type="button" id="search_btn" class="btn btn-info">Search</button>
+                </div>
+            </div>
+            <hr />
+            <div class="custom-gutters" id="search-result-region">
+            </div>
+        </div>
+
+        </div>
+
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+        <script src="/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+        <script src="/bootstrap-datepicker/js/locales/bootstrap-datepicker.zh-TW.js"></script>
+        <script src="/javascripts/main.js"></script>
+        <script src="/javascripts/search_result_render.js"></script>
+        <script type="text/javascript">
+$(function () {
+    $('#datetimepicker_from').datepicker({
+        format: "yyyy/mm/dd",
+        autoclose: true,
+        clearBtn: true,
+        calendarWeeks: true,
+        todayHighlight: true,
+        language: 'zh-TW'
+    });
+});
+$(function () {
+    $('#datetimepicker_to').datepicker({
+        format: "yyyy/mm/dd",
+        autoclose: true,
+        clearBtn: true,
+        calendarWeeks: true,
+        todayHighlight: true,
+        language: 'zh-TW'
+    });
+});
+$("#datetimepicker_from_remove").on('click', function(e) {
+    e.stopPropagation();
+    $('#datetimepicker_from_input').val('');
+});
+$("#datetimepicker_to_remove").on('click', function(e) {
+    e.stopPropagation();
+    $('#datetimepicker_to_input').val('');
+});
+$('#search_btn').on('click', function() {
+    $('#search-result-region').empty();
+    let ajax_url = window.location.protocol + "//" + window.location.host + "/search/search";
+    let ajax_data = {
+        'text_search': $("#text-search-input").val(),
+        'date_from': $("#datetimepicker_from_input").val(),
+        'date_to': $("#datetimepicker_to_input").val(),
+        'page_num': 1,
+    };
+    $.ajax({
+        url: ajax_url,
+        type: 'post',
+        data: JSON.stringify(ajax_data),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        error: function(xhr) {
+            console.log(xhr.status);
+            console.log(xhr.statusText);
+        },
+        success: function(response) {
+            search_result_render(response.problem_list.docs);
+            //console.log(response.problem_list);
+        },
+    });
+});
+        </script>
+    </body>
+</html>
