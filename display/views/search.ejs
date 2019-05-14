@@ -90,6 +90,11 @@
         <script src="/javascripts/main.js"></script>
         <script src="/javascripts/search_result_render.js"></script>
         <script type="text/javascript">
+let now_search_option = {
+    text_search: "",
+    date_from: "",
+    date_to: "",
+}
 $(function () {
     $('#datetimepicker_from').datepicker({
         format: "yyyy/mm/dd",
@@ -119,13 +124,20 @@ $("#datetimepicker_to_remove").on('click', function(e) {
     $('#datetimepicker_to_input').val('');
 });
 $('#search_btn').on('click', function() {
+    now_search_option.text_search = $("#text-search-input").val();
+    now_search_option.date_from = $("#datetimepicker_from_input").val();
+    now_search_option.date_to = $("#datetimepicker_to_input").val();
+    update_search_page(1);
+});
+function update_search_page(page_num) {
+    now_search_option.page_num = page_num;
     $('#search-result-region').empty();
     let ajax_url = window.location.protocol + "//" + window.location.host + "/search/search";
     let ajax_data = {
-        'text_search': $("#text-search-input").val(),
-        'date_from': $("#datetimepicker_from_input").val(),
-        'date_to': $("#datetimepicker_to_input").val(),
-        'page_num': 1,
+        'text_search': now_search_option.text_search,
+        'date_from': now_search_option.date_from,
+        'date_to': now_search_option.date_to,
+        'page_num': now_search_option.page_num,
     };
     $.ajax({
         url: ajax_url,
@@ -138,11 +150,10 @@ $('#search_btn').on('click', function() {
             console.log(xhr.statusText);
         },
         success: function(response) {
-            search_result_render(response.problem_list.docs);
-            //console.log(response.problem_list);
+            search_result_render(response.problem_list.docs, now_search_option.page_num);
         },
     });
-});
+}
         </script>
     </body>
 </html>

@@ -1,7 +1,5 @@
 
-function search_result_render(problem_list) {
-    let render_content_arr = [];
-    let row_div_is_end = true;
+function search_result_render(problem_list, page_num) {
     for (let i=0 ; i<problem_list.length ; i++) {
         add_search_result(problem_list[i]);
     }
@@ -13,6 +11,46 @@ function search_result_render(problem_list) {
     for (let i=0 ; i<problem_list.length ; i++) {
         add_edit_modal(problem_list[i]);
     }
+
+    add_pagination_div(page_num);
+}
+
+function add_pagination_div(page_num) {
+    let render_content_arr = [];
+    render_content_arr.push('<div class="row justify-content-center">');
+    if (page_num > 1) {
+        render_content_arr.push('<button type="button" id="last_page_btn" onclick="click_last_page(' + page_num.toString() + ')" class="btn btn-info">上一頁</button>');
+        }
+    render_content_arr.push('<div class="col-2">');
+    render_content_arr.push('<div class="input-group">');
+    render_content_arr.push('<input type="text" id="page_num_input" class="form-control" value="' + page_num.toString() + '">');
+    render_content_arr.push('<button type="button" id="jump_page_btn" onclick="click_jump_page(' + page_num.toString() + ')" class="btn btn-info">手動跳頁</button>');
+    render_content_arr.push('</div>');
+    render_content_arr.push('</div>');
+
+    render_content_arr.push('<button type="button" id="next_page_btn" onclick="click_next_page(' + page_num.toString() + ')" class="btn btn-info">下一頁</button>');
+
+    render_content_arr.push('</div>');
+    $('#search-result-region').append(render_content_arr.join('\n'));
+}
+
+function click_last_page(page_num) {
+    let now_page_num = now_search_option.page_num-1;
+    update_search_page(now_page_num);
+}
+function click_jump_page(page_num) {
+    if (isNaN($('#page_num_input').val())) {
+        alert($('#page_num_input').val() + ' is not a valid number');
+        return;
+    }
+    if (now_search_option.page_num.toString() !== $('#page_num_input').val()) {
+        let now_page_num = parseInt($('#page_num_input').val());
+        update_search_page(now_page_num);
+    }
+}
+function click_next_page(page_num) {
+    let now_page_num = now_search_option.page_num+1;
+    update_search_page(now_page_num);
 }
 
 function add_search_result(problem_doc) {
