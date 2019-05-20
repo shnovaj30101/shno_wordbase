@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous"> 
+        <title>Hello, world!</title>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <p class="text-center" style="font-size:25px; margin-bottom:0px;">
+                    Problem Interface
+                    </p>
+                </div>
+            </div>
+            <div class="card mt-2 mb-2" id='problem_card'>
+                <div class="card-header" id="problem-text-div">
+                    <% let word_list = problem.text.split(/\s+/); %>
+                    <% let word_pos_set = new Set(problem.word_pos); %>
+                    <% for (let [index, word] of word_list.entries()) { %>
+                    <% if (!word_pos_set.has(index.toString())) { %>
+                    <span><%= word %></span>
+                    <% } else { %>
+                    <span style="text-decoration:underline; color:red;"><%= word %></span>
+                    <% } %>
+                    <% } %>
+                </div>
+                <ul class="list-group list-group-flush" data-id="<%= problem._id %>" id="problem_ul">
+                    <% function comp_word_pos(a,b) { return parseInt(problem.word_pos[a]) - parseInt(problem.word_pos[b]); } %>
+                    <% let index_sort_with_word_pos = Array.from(Array(problem.word_pos.length).keys()).sort(comp_word_pos); %>
+                    <% for (let i=0 ; i < problem.word_pos.length ; i++) { %>
+                    <% let word = word_list[problem.word_pos[index_sort_with_word_pos[i]]]; %>
+                    <% let chinese_trans = problem.chinese_trans[index_sort_with_word_pos[i]]; %>
+                    <% let answer_times = problem.answer_times[index_sort_with_word_pos[i]]; %>
+                    <% let look_times = problem.look_times[index_sort_with_word_pos[i]]; %>
+                    <li class="list-group-item" data-answer="<%= chinese_trans %>" data-index="<%= index_sort_with_word_pos[i] %>">
+                        <div class="row">
+                            <div class="input-group input-group-sm col-sm-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><%= word %></span>
+                                    <span class="input-group-text">中文</span>
+                                </div>
+                                <input type="text" class="form-control">
+                            </div>
+                            <div class="input-group input-group-sm col-sm-2">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">答對次數</span>
+                                </div>
+                                <input readonly type="text" class="form-control answer_input" value="<%= answer_times %>" >
+                            </div>
+                            <div class="input-group input-group-sm col-sm-2">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">答錯次數</span>
+                                </div>
+                                <input readonly type="text" class="form-control look_input" value="<%= look_times %>">
+                            </div>
+
+                        </div>
+                    </li>
+                    <% } %>
+                </ul>
+            </div>
+            <div id="btn-region">
+                <button type="button" class="btn btn-info" onclick="check_answer()">
+                    Check_Answer
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+        <script>
+function check_answer() {
+    $('#problem_ul li').each(function(index, elem) {
+        let render_content_arr = [];
+        render_content_arr.push('<div class="input-group input-group-sm col-sm-2">');
+        render_content_arr.push('<div class="input-group-prepend">');
+        render_content_arr.push('<span class="input-group-text">答案</span>');
+        render_content_arr.push('</div>');
+        render_content_arr.push('<input readonly type="text" class="form-control" value="'+$(elem).data('answer')+'">');
+        render_content_arr.push('</div>');
+        render_content_arr.push('<div class="btn-group btn-group-toggle score_region" data-toggle="buttons">');
+        render_content_arr.push('<label class="btn btn-outline-info btn-sm">');
+        render_content_arr.push('<input type="radio" name="' + $(elem).data('index') + '" autocomplete="off"> Correct');
+        render_content_arr.push('</label>');
+        render_content_arr.push('<label class="btn btn-outline-info btn-sm">');
+        render_content_arr.push('<input type="radio" name="' + $(elem).data('index') + '" autocomplete="off"> Wrong');
+        render_content_arr.push('</label>');
+        render_content_arr.push('<label class="btn btn-outline-info btn-sm active">');
+        render_content_arr.push('<input type="radio" name="' + $(elem).data('index') + '" autocomplete="off" checked> Ignore');
+        render_content_arr.push('</label>');
+        render_content_arr.push('</div>');
+        $(elem).find('.row').append(render_content_arr.join('\n'));
+    })
+    $('#btn-region').empty();
+
+    let render_content_arr = [];
+    render_content_arr.push('<button type="button" class="btn btn-info" onclick="submit_answer()">');
+    render_content_arr.push('Submit');
+    render_content_arr.push('</button>');
+
+    $('#btn-region').append(render_content_arr.join('\n'));
+}
+
+function submit_answer() {
+    let new_answer_times_arr = {};
+    let new_look_times_arr = {};
+    $('#problem_ul li').each(function(index, elem) {
+        let ori_index = parseInt($(elem).data('index'));
+        let answer_times = parseInt($(elem).find('.answer_input').val());
+        let look_times = parseInt($(elem).find('.look_input').val());
+        $(elem).find('.score_region input').each(function(input_index, input_elem) {
+            if ($(input_elem).prop('checked')) {
+                if (input_index === 0) {
+                    new_answer_times_arr[ori_index] = answer_times + 1;
+                    new_look_times_arr[ori_index] = look_times;
+                } else if (input_index === 1) {
+                    new_answer_times_arr[ori_index] = answer_times;
+                    new_look_times_arr[ori_index] = look_times + 1;
+                } else {
+                    new_answer_times_arr[ori_index] = answer_times;
+                    new_look_times_arr[ori_index] = look_times;
+                }
+            }
+        });
+    });
+    //console.log(new_answer_times_arr)
+    //console.log(new_look_times_arr)
+    //console.log(Object.entries(new_answer_times_arr))
+    //console.log(Object.entries(new_look_times_arr))
+    new_answer_times_arr = Object.entries(new_answer_times_arr).map(item => item[1]);
+    new_look_times_arr = Object.entries(new_look_times_arr).map(item => item[1]);
+
+    let problem_id = $('#problem_ul').data('id');
+    let ajax_url = window.location.protocol + "//" + window.location.host + "/submit_answer";
+    let ajax_data = {
+        id: problem_id,
+        answer_times: new_answer_times_arr,
+        look_times: new_look_times_arr,
+    };
+    $.ajax({
+        url: ajax_url,
+        type: 'post',
+        data: JSON.stringify(ajax_data),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        error: function(xhr) {
+            console.log(xhr.status);
+            console.log(xhr.statusText);
+            alert("Submit " + problem_id + " answer fail: "+xhr.statusText);
+        },
+        success: function(response) {
+            if (response.success) {
+                alert("Submit problem " + problem_id + " answer success");
+            } else {
+                alert("Submit " + problem_id + " answer fail: "+response.reason);
+                location.href = window.location.url;
+            }
+        },
+    });
+}
+        </script>
+    </body>
+</html>

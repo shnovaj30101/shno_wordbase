@@ -70,6 +70,26 @@ app.post('/delete_problem', function (req, res, next) {
 
 });
 
+app.post('/submit_answer', function (req, res, next) {
+    let res_body = {
+        success: false,
+        reason: '',
+    }
+    try {
+        Problem.findOne({_id: req.body.id}, function (err, problem) {
+            problem.look_times = req.body.look_times;
+            problem.answer_times = req.body.answer_times;
+
+            problem.save((err, problem) => {});
+            res_body.success = true;
+            res.json(res_body);
+        });
+    } catch (err) {
+        res_body.reason = err.stack;
+        res.json(res_body);
+    }
+});
+
 app.post('/update_problem', function (req, res, next) {
     let res_body = {
         success: false,
