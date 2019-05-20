@@ -161,9 +161,9 @@ function submit_answer() {
         success: function(response) {
             if (response.success) {
                 alert("Submit problem " + problem_id + " answer success");
+                window.location.reload();
             } else {
                 alert("Submit " + problem_id + " answer fail: "+response.reason);
-                location.href = window.location.url;
             }
         },
     });
