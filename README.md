@@ -28,20 +28,20 @@ $ cd shno_wordbase/display
 $ node app.js
 ```
 ## GUI Interface
-#### Search Interface
-> With the search interface, you can search the questions you built by assigning the query word or the date range. Then you can edit or delete a question on the search interface.
- * URL: http://localhost:3000/search/ 
-![image](https://github.com/shnovaj30101/shno_wordbase/blob/master/readme_gif/search.gif)
-
-#### Problem Interface
-> You can review the vocabulary by answering questions displayed randomly on the problem interface. This interface would also display the frequency of getting the answer right or not. 
- * URL: http://localhost:3000/problem/ 
-
 #### Addition Interface
 > You can add new word questions on the Interface. 
  * URL: http://localhost:3000/addition/ 
 ![image](https://github.com/shnovaj30101/shno_wordbase/blob/master/readme_gif/addition.gif)
 
+#### Problem Interface
+> You can review the vocabulary by answering questions displayed randomly on the problem interface. This interface would also display the frequency of getting the answer right or not. 
+ * URL: http://localhost:3000/problem/ 
+![image](https://github.com/shnovaj30101/shno_wordbase/blob/master/readme_gif/problem.gif)
+
+#### Search Interface
+> With the search interface, you can search the questions you built by assigning the query word or the date range. Then you can edit or delete a question on the search interface.
+ * URL: http://localhost:3000/search/ 
+![image](https://github.com/shnovaj30101/shno_wordbase/blob/master/readme_gif/search.gif)
 
 
 
