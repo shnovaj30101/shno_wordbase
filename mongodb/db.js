@@ -1,5 +1,7 @@
+const { config_options } = require('../config.js');
+
 var mongoose = require('mongoose'),
-    DB_URL = 'mongodb://localhost:9113/recite_word';
+    DB_URL = 'mongodb://localhost:' + config_options.mongodb_port.toString() + '/recite_word';
 
 mongoose.connect(DB_URL,{ useNewUrlParser: true, useCreateIndex: true });
 

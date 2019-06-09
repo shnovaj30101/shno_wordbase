@@ -186,6 +186,7 @@ $("#construct-modal").on("show.bs.modal", function (e) {
 });
 
 function close_construct_modal() {
+    $("#construct-modal").find("#submit_prob_btn").off('click');
     let modal_body_form = $("#construct-modal").find(".modal-body > form");
     modal_body_form.remove();
 }
